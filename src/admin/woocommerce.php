@@ -7,16 +7,17 @@ class Woocommerce {
 
     public function __construct(){  
         add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
+        add_action( 'save_post', array( $this, 'save_metabox' ), 10, 2 );
     }
 
     public function add_meta_box( $post_type ) {
-        $post_types = array('product');     //limit meta box to certain post types
+        $post_types = array('product');
         global $post;
         $product = wc_get_product( $post->ID );
         if ( in_array( $post_type, $post_types ) && ($product->get_type() == 'simple' ) ) {
             add_meta_box(
                 'ywr_from'
-                ,__( 'Wishlist Reminder', 'woocommerce' )
+                ,__( 'Wishlist Reminder', 'textdomain' )
                 ,array( $this, 'render_metabox' )
                 ,$post_type
                 ,'advanced'
@@ -26,64 +27,43 @@ class Woocommerce {
     }
 
     public function render_metabox( $post ) {
+       require 'view/product-metabox.php';
+	}
 
-        $fieldFrom = 'ywr_from';
-        $fieldSubject = 'ywr_subject';
-        $fieldContent = 'ywr_content';
+    public function save_metabox( $post_id, $post ) {
+    
+        // Check if nonce is valid.
+        if( !wp_verify_nonce( $_POST['ywr_meta_box_nonce'], 'ywr_meta_box_action' ) ) {
+            return;
+        }
 
-		// Add an nonce field so we can check for it later.
-		wp_nonce_field( $fieldFrom .'_custom_box', $fieldFrom .'_custom_box_nonce' );
-        wp_nonce_field( $fieldSubject .'_custom_box', $fieldSubject .'_custom_box_nonce' );
-        wp_nonce_field( $fieldContent .'_custom_box', $fieldContent .'_custom_box_nonce' );
+		// Check if user has permissions to save data.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
 
-		// Use get_post_meta to retrieve an existing value from the database.
-		$valueFrom = get_post_meta( $post->ID, $fieldFrom, true );
-        $valueSubject = get_post_meta( $post->ID, $fieldSubject, true );
-        $valueContent = get_post_meta( $post->ID, $fieldContent, true );
+		// Check if not an autosave.
+		if ( wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
 
-		// Display the form, using the current value.
-		?>
+		// Check if not a revision.
+		if ( wp_is_post_revision( $post_id ) ) {
+			return;
+		}
 
-        <table>
-            <tr>
-                <td>
-                    <label for="<?= $fieldFrom; ?>">
-                        <?php _e( 'From', 'textdomain' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <input type="text" id="<?= $fieldFrom; ?>" name="<?= $fieldFrom; ?>" value="<?php echo esc_attr( $valueFrom ); ?>" size="25" />
-                </td>
-            </tr>
+        if (isset($_POST['ywr_from'])) {
+            update_post_meta($post_id, 'ywr_from', sanitize_text_field($_POST['ywr_from']));
+        }
+        
+        if (isset($_POST['ywr_subject'])) {
+            update_post_meta($post_id, 'ywr_subject', sanitize_text_field($_POST['ywr_subject']));
+        }
 
-            <tr>
-                <td>
-                    <label for="<?= $fieldSubject; ?>">
-                        <?php _e( 'Subject', 'textdomain' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <input type="text" id="<?= $fieldSubject; ?>" name="<?= $fieldSubject; ?>" value="<?php echo esc_attr( $valueSubject ); ?>" size="25" />
-                </td>
-            </tr>
+        if (isset($_POST['ywr_content'])) {
+            update_post_meta($post_id, 'ywr_content', sanitize_text_field($_POST['ywr_content']));
+        }
 
-            <tr>
-                <td>
-                    <label for="<?= $fieldContent; ?>">
-                        <?php _e( 'Content', 'textdomain' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <textarea name="<?= $fieldContent; ?>" id="<?= $fieldContent; ?>" cols="100" rows="10">
-                        <?php echo esc_attr( $valueContent ); ?>
-                    </textarea>
-                </td>
-            </tr>
-
-        </table>
-
-
-		<?php
 	}
 
 
