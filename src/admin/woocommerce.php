@@ -3,7 +3,7 @@
 namespace Isaidi\YithWishlistReminder\Admin;
 
 
-class Woocommerce {
+class WoocommerceYwr {
 
     public function __construct(){  
         add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
@@ -16,7 +16,7 @@ class Woocommerce {
         $product = wc_get_product( $post->ID );
         if ( in_array( $post_type, $post_types ) && ($product->get_type() == 'simple' ) ) {
             add_meta_box(
-                'ywr_from'
+                'ywr'
                 ,__( 'Wishlist Reminder', 'textdomain' )
                 ,array( $this, 'render_metabox' )
                 ,$post_type
@@ -69,4 +69,4 @@ class Woocommerce {
 
 }
 
-new Woocommerce();
+new WoocommerceYwr();

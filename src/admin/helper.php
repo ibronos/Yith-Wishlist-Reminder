@@ -23,4 +23,11 @@ class AdminHelper {
         return false;
     }
 
+    function get_total_wishlist() {
+        global $post, $wpdb;
+        $user_count = $wpdb->get_results( "SELECT count(*) as total FROM wp_yith_wcwl where prod_id = $post->ID", OBJECT);
+        
+        return $user_count[0]->total;
+    }
+
 }

@@ -1,31 +1,43 @@
 <?php
 
-namespace Isaidi\YithWishlistReminder\Admin;
+// namespace Isaidi\YithWishlistReminder\Admin;
 
 use Isaidi\YithWishlistReminder\Admin\AdminHelper as helper;
 
 class YithCheck {
 
-    protected $adminHelper;
+    protected $admin_helper;
 
     public function __construct(){  
         add_action('init', array($this, 'plugin_check'));
-        $this->adminHelper = new helper();
+        $this->admin_helper = new helper();
     }
 
     function plugin_check() {
         
-        //run only when woocommerce and yith wishlist active
+        global $pagenow;
+
+        /** 
+         * Run only when:
+         * - woocommerce active
+         * - yith wishlist active
+         * - on product edit screen
+        */
         if (
-            $this->adminHelper->is_plugin_active_by_name('YITH WooCommerce Wishlist') &&
-            $this->adminHelper->is_plugin_active_by_name('WooCommerce')
-        ) 
-        {
+            $this->admin_helper->is_plugin_active_by_name('YITH WooCommerce Wishlist') &&
+            $this->admin_helper->is_plugin_active_by_name('WooCommerce') && 
+            $pagenow == 'post.php'
+        ) {
             require 'woocommerce.php';
         }
-        else {
+         
+        if
+        (
+            $this->admin_helper->is_plugin_active_by_name('YITH WooCommerce Wishlist') == false ||
+            $this->admin_helper->is_plugin_active_by_name('WooCommerce') == false
+        )
+        {
             add_action( 'admin_notices',  array( $this, 'plugin_check_error_notif' ) );
-
         }
 
     }
