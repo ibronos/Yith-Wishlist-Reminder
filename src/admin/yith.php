@@ -1,6 +1,6 @@
 <?php
 
-// namespace Isaidi\YithWishlistReminder\Admin;
+namespace Isaidi\YithWishlistReminder\Admin;
 
 use Isaidi\YithWishlistReminder\Admin\AdminHelper as helper;
 
@@ -14,7 +14,7 @@ class YithCheck {
     }
 
     function plugin_check() {
-        
+
         global $pagenow;
 
         /** 
@@ -35,8 +35,7 @@ class YithCheck {
         (
             $this->admin_helper->is_plugin_active_by_name('YITH WooCommerce Wishlist') == false ||
             $this->admin_helper->is_plugin_active_by_name('WooCommerce') == false
-        )
-        {
+        ){
             add_action( 'admin_notices',  array( $this, 'plugin_check_error_notif' ) );
         }
 

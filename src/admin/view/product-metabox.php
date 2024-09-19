@@ -55,4 +55,14 @@ $total_wishlist = $helper->get_total_wishlist();
         </td>
     </tr>
 
+    <tr>
+        <td>
+        </td>
+        <td>
+            <button id="ywr-submit" class="button button-primary" style="min-width: 100px;">Send</button>
+        </td>
+    </tr>
+
 </table>
+
+<div id="ywr-api-response"></div>
