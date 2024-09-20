@@ -11,4 +11,4 @@ Wordpress plugin to send wishlist reminder email to customers.
 
 ## Screenshots
 
-![App Screenshot](https://raw.githubusercontent.com/ibronos/Yith-Wishlist-Reminder/blob/main/src/admin/assets/screenshot.png)
+![App Screenshot](https://i.ibb.co.com/bQ0QC8Q/screenshot.png)
