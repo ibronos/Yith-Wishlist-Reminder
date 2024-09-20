@@ -29,15 +29,48 @@ Class ApiYwr {
         $users = $wpdb->get_results( "SELECT user_id FROM wp_yith_wcwl where prod_id = $post_id", OBJECT);
         $emails = [];
 
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $user_info = get_userdata($user->user_id);
-                $email = $user_info->user_email;
-                array_push($emails, $email);
+        try {
+
+            $from = isset($params['from']) ? sanitize_text_field($params['from']) : '';
+            $subject = isset($params['subject']) ? sanitize_text_field($params['subject']) : '';
+            $message = isset($params['content']) ? sanitize_text_field($params['content']) : '';
+    
+            // Get WooCommerce mailer from the instance
+            $mailer = WC()->mailer();
+            
+            // Wrap message in WooCommerce template
+            $wrapped_message = $mailer->wrap_message($subject, $message);
+            
+            // Create new WC_Email instance
+            $wc_email = new \WC_Email();
+            
+            // Style the wrapped message
+            $styled_message = $wc_email->style_inline($wrapped_message);
+
+            // Change WooCommerce "From" Email Address
+            if( !empty($from) ){
+                add_filter('woocommerce_email_from_address', function($from_email) use ($from) {
+                        return $from;
+                    }
+                );
             }
+
+            if (!empty($users)) {
+                foreach ($users as $user) {
+                    $user_info = get_userdata($user->user_id);
+                    $to = $user_info->user_email;
+
+                    // Send the email using WooCommerce
+                    $mailer->send($to, $subject, $styled_message, '', '');
+                }
+            }
+            
+            return new \WP_REST_Response("email success", 200);
+
+        } catch (\Throwable $th) {
+            return new \WP_REST_Response($th->getMessage(), 500);
         }
 
-        return new \WP_REST_Response($emails, 200);
     }
 
     function ywr_api_admin_scripts() {
