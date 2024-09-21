@@ -1,12 +1,12 @@
-# Yith wishlist email reminder
+# YITH Wishlist Email Reminder
 
-Wordpress plugin to send wishlist reminder email to customers.
+A WordPress plugin to send wishlist reminder emails to customers.
 
 # Getting started
 
-- Download this repository as .zip and upload this files to your WordPress plugins directory.
-- Make sure you have [Woocommerce](https://woocommerce.com/) and [Yith Woocommerce Wishlist](https://wordpress.org/plugins/yith-woocommerce-wishlist/) installed on your site.
-- Go to product edit page to use this plugin.
+- Download this repository as a .zip file and upload it to your WordPress plugins directory.
+- Ensure that [Woocommerce](https://woocommerce.com/) and [Yith Woocommerce Wishlist](https://wordpress.org/plugins/yith-woocommerce-wishlist/) are installed on your site.
+- Navigate to the product edit page to use this plugin.
 
 
 ## Screenshots
